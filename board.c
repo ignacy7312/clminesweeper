@@ -24,6 +24,7 @@ BoardStruct_t makeNewBoard(void){
         int x = rand() % BOARD_SIZE;
         int y = rand() % BOARD_SIZE;
 
+        // A bomb is represented as 42 - a * in ASCII
         if(board.arr[x][y] == 42){
             continue;
         }
@@ -35,6 +36,7 @@ BoardStruct_t makeNewBoard(void){
 }
 
 BoardStruct_t makeVisibleBoard(BoardStruct_t* board, int dug[]){
+    //Create the board that is being displayed to the player
 
     BoardStruct_t visibleBoard;
 
@@ -50,7 +52,7 @@ BoardStruct_t makeVisibleBoard(BoardStruct_t* board, int dug[]){
                 visibleBoard.arr[i][j] = board->arr[i][j];
             
             else
-                visibleBoard.arr[i][j] = 32;
+                visibleBoard.arr[i][j] = 32; //32 represents an empty space in ASCII
         }
     }
     return visibleBoard;
@@ -58,22 +60,27 @@ BoardStruct_t makeVisibleBoard(BoardStruct_t* board, int dug[]){
 
 
 void printVisibleBoard(BoardStruct_t board){
+    // print the board to the player
     
-    printf("  0 1 2 3 4 5 6 7 8 9\n");
+    printf("   0 1 2 3 4 5 6 7 8 9\n");
+    printf("---------------------\n");
     for(int i = 0; i < BOARD_SIZE; i++){
-        printf("%d ", i);
+        printf("%d| ", i);
         for(int j = 0; j < BOARD_SIZE; j++){
             if(board.arr[i][j] != 42 && board.arr[i][j] != 32)
+                // if a bomb place or unchecked space print it as an ASCII character. Else print the number of neighboring bombs.
                 printf("%d ", (board.arr[i][j]));
             else
                 printf("%c ", (char)(board.arr[i][j]));
         }
-        printf("\n");
+        printf("|\n");
     }
+    printf("---------------------\n");
 }
 
 void printBoard(BoardStruct_t board){
-    
+    // print raw board. for debug purposes or so
+
     for(int i = 0; i < BOARD_SIZE; i++){
         for(int j = 0; j < BOARD_SIZE; j++){
             printf("%d ", board.arr[i][j]);
@@ -83,7 +90,8 @@ void printBoard(BoardStruct_t board){
 }
 
 void assignValuesToBoard(BoardStruct_t * board){
-     
+     //assign each bombless place on the board the number of neighboring bombs
+
     for(int r = 0; r < BOARD_SIZE; r++){
         for(int c = 0; c < BOARD_SIZE; c++){
             if(board->arr[r][c] == 42){
@@ -96,7 +104,7 @@ void assignValuesToBoard(BoardStruct_t * board){
 
 
 int getNumberOfNeighboringBombs(BoardStruct_t board, int row, int col){
-
+    //calculate the number of neighboring bombs
     int bombCount = 0;
 
     for(int x = max(0, row -1); x < (min(BOARD_SIZE - 1, row + 1) + 1); x++){
@@ -116,6 +124,8 @@ int getNumberOfNeighboringBombs(BoardStruct_t board, int row, int col){
 }
 
 bool dig(BoardStruct_t * board, int row, int col, int dug[]){
+    // check if the place is bombless or no. If bombless and any neighboring also bombless, dig recursively. 
+    // return true if no bomb or false if bomb
 
     dug[row*BOARD_SIZE + col] = 1;
 
